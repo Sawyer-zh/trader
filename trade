@@ -1,0 +1,45 @@
+#!/usr/bin/env php
+<?php
+
+// register auto_load_function
+
+spl_autoload_register(function ($class) {
+
+    $dirArr = explode('\\', $class);
+
+    $dirArr[0] = 'app';
+
+    $path = implode('/', $dirArr);
+
+    include $path . '.php';
+
+}, true, true);
+
+$loginRet =  App\Trader::login();
+
+if (json_decode($loginRet)->Status != 0) {
+    exit($loginRet);
+}
+
+echo "enter auto trade\n";
+
+$fixedStrategy = new App\Strategy\FixedValue();
+
+$fixedStrategy->config = [
+    '512000'=>[
+        'fixedValue'=>36000,
+        'rate'=>1,
+    ],
+
+    '501029'=>[
+        'fixedValue'=>27000,
+        'rate'=>1,
+    ],
+];
+
+$fixedStrategy->execute();    
+
+ 
+
+
+
